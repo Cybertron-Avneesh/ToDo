@@ -51,12 +51,8 @@ function addtask()
 function clearfield()
 {
             var fields,FieldArray;
-            fields=document.querySelectorAll('.add_task');
-            FieldArray=Array.prototype.slice.call(fields);
-            FieldArray.forEach(function(current,index,array){
-                current.value="";
-            });
-            FieldArray[0].focus();
+            fields=document.querySelector('.add_task');
+            fields.value="";
 }
 
 
