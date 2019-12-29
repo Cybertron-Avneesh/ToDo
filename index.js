@@ -1,5 +1,5 @@
 //TODO with delete button
-
+var total=0,tasksDone=0;
 
 document.querySelector('.add_button').addEventListener('click',addtask);
 
@@ -7,27 +7,48 @@ document.addEventListener('keypress',function(event){
     if(event.keyCode===13||event.which===13)
         addtask();
 });
-var tasks=[];
+var tasks=
+{
+    csLearning:[],
+    household:[],
+    Entertainment:[]
+};
 
 function addtask()
 {
-    var task,html,newHtml,id,newTask;
+    var task,html,newHtml,id,newTask,taskType,taskType_list;
     task=document.querySelector('.add_task').value;
-    
-    html='<div id="%id%"><li>%List%</li><button class="delete_btn">Delete</button></div>'
-    id=calculateID();
+    if(task!=='')
+    {
+        taskType=document.querySelector('.taskType').value;
 
-    
-    newTask=new Task(task,id);
-    tasks.push(newTask);
+        if(taskType==='csLearning'){
+            html='<div id="csLearning-%id%"><li>%List%</li><input type="checkbox" class="Done_btn">Done</input></div>';
+            taskType_list='.csLearning';
+        }
+        else if(taskType==='household'){
+            html='<div id="household-%id%"><li>%List%</li><input type="checkbox" class="Done_btn">Done</input></div>';
+            taskType_list='.household';
+        }
+        else{
+            html='<div id="Entertainment-%id%"><li>%List%</li><input type="checkbox" class="Done_btn">Done</input></div>';
+            taskType_list='.Entertainment'
+        }
 
-    newHtml=html.replace('%List%',task);
-    newHtml=newHtml.replace('%id%',newTask.id);
-    document.querySelector('.tasks_list').insertAdjacentHTML('beforeend',newHtml);
-    init();
+        newTask=new Task(task,taskType);
+        tasks[taskType].push(newTask);
+            
+
+        newHtml=html.replace('%List%',task);
+        newHtml=newHtml.replace('%id%',newTask.id);
+        document.querySelector(taskType_list).insertAdjacentHTML('beforeend',newHtml);
+        clearfield();
+        total++;
+        Donetasks(taskType);
+    }
 };   
 
-function init()
+function clearfield()
 {
             var fields,FieldArray;
             fields=document.querySelectorAll('.add_task');
@@ -37,38 +58,58 @@ function init()
             });
             FieldArray[0].focus();
 }
-calculateID=function(){
-    if(tasks.length>0)
-        ID=tasks[tasks.length-1].id+1;
-    else
-        ID=0;
-    return ID;
-}
 
-var Task=function(task,id){
+
+var Task=function(task,type){
     this.task=task;
-    this.id=id;
+    id=new Date();
+    this.id=id.getTime();
+    this.type=type;
+    this.done=false;
 }
 
-document.querySelector('.tasks_list').addEventListener('click',deleteTask);
+document.querySelector('.tasks_list').addEventListener('click',done);
 
+function done(event)
+{
 
-function deleteTask(event){
-    var taskID,index,ids,el;
+    var taskID,ID,index,splitID,ids;
     taskID=event.target.parentNode.id;
-    ids=tasks.map(function(current){
-        return current.id;
-    })
-    taskID=parseInt(taskID);
-    index=ids.indexOf(taskID);
+    splitID=taskID.split('-');
+       
+    ID=parseInt(splitID[1]);
 
-    if(index!=-1)
-    {
-        tasks.splice(index,1);
+    ids=tasks[splitID[0]].map(function(current){
+        return current.id;
+    });
+    index=ids.indexOf(ID);
+    if(!tasks[splitID[0]][index].done)
+    {         
+        tasks[splitID[0]][index].done=true;
+        tasksDone++;
+        Donetasks(splitID[0]);
     }
-    el=document.getElementById(taskID);
-    el.parentNode.removeChild(el);
 }
+
+
+function Donetasks(type)
+{
+    var total_type=0,tasksDone_type=0;
+    tasks[type].forEach(function(current)
+    {
+        if(current.done){
+            tasksDone_type++;
+        }
+        total_type++;
+    });
+    document.querySelector('.done_'+type).textContent='Done'+' '+tasksDone_type+'/'+total_type;
+    document.querySelector('.tasks_done').textContent='Total tasks Done'+' '+tasksDone+'/'+total;
+}
+
+
+
+
+
 
 
 
