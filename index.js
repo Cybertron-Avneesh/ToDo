@@ -1,62 +1,73 @@
-//TODO with delete button
-var total=0,tasksDone=0;
 
-document.querySelector('.add_button').addEventListener('click',addtask);
+var TotalTasks=0,TotalDone=0;
 
-document.addEventListener('keypress',function(event){
-    if(event.keyCode===13||event.which===13)
-        addtask();
-});
-var tasks=
+document.querySelector('.add_cate_btn').addEventListener('click',addCategory);
+
+function addCategory()
 {
-    csLearning:[],
-    household:[],
-    Entertainment:[]
-};
-
-function addtask()
-{
-    var task,html,newHtml,id,newTask,taskType,taskType_list;
-    task=document.querySelector('.add_task').value;
-    if(task!=='')
+    var category,htmlOption,htmlTitle;
+    category=document.querySelector('.task_cate').value;
+    if(category!=='')
     {
-        taskType=document.querySelector('.taskType').value;
+        tasks[category]=[];
 
-        if(taskType==='csLearning'){
-            html='<div id="csLearning-%id%"><li>%List%</li><input type="checkbox" class="Done_btn">Done</input></div>';
-            taskType_list='.csLearning';
-        }
-        else if(taskType==='household'){
-            html='<div id="household-%id%"><li>%List%</li><input type="checkbox" class="Done_btn">Done</input></div>';
-            taskType_list='.household';
-        }
-        else{
-            html='<div id="Entertainment-%id%"><li>%List%</li><input type="checkbox" class="Done_btn">Done</input></div>';
-            taskType_list='.Entertainment'
-        }
+        htmlOption='<option value="%Category%">%category%</option>'
 
-        newTask=new Task(task,taskType);
-        tasks[taskType].push(newTask);
-            
+        htmlOption=htmlOption.replace('%Category%',category);
+        htmlOption=htmlOption.replace('%category%',category);
 
-        newHtml=html.replace('%List%',task);
-        newHtml=newHtml.replace('%id%',newTask.id);
-        document.querySelector(taskType_list).insertAdjacentHTML('beforeend',newHtml);
-        clearfield();
-        total++;
-        Donetasks(taskType);
+        document.querySelector('.taskType').insertAdjacentHTML('beforeend',htmlOption);
+
+        htmlTitle='<div><h3>Title</h3><h5 class="category_task_done">Done 0/0</h5><ol class="task_type"></ol></div>'
+
+        htmlTitle=htmlTitle.replace('Title','->'+category);
+        htmlTitle=htmlTitle.replace('category_task_done','done_'+category);
+        htmlTitle=htmlTitle.replace('task_type',category);
+
+        document.querySelector('.tasks_done').insertAdjacentHTML('beforeend',htmlTitle);
+
+        clearFields();
     }
-};   
-
-function clearfield()
-{
-            var fields,FieldArray;
-            fields=document.querySelector('.add_task');
-            fields.value="";
 }
 
 
-var Task=function(task,type){
+document.querySelector('.add_button').addEventListener('click',addTask);
+
+
+var tasks=new Object();
+
+
+function addTask()
+{
+    var task,html,taskType,newTask;
+    task=document.querySelector('.add_task').value;
+    taskType=document.querySelector('.taskType').value;
+
+    if(task!=='')
+    {
+
+        newTask=new Task(task,taskType);
+        tasks[taskType].push(newTask);
+
+        html='<div id="%task_type-%id%"><li>%List%</li><input type="checkbox" class="Done_btn">Done</input></div>';
+
+        html=html.replace('%task_type-%id%',taskType+'-'+newTask.id);
+        html=html.replace('%List%',task);
+
+        document.querySelector('.'+taskType).insertAdjacentHTML('beforeend',html);
+
+        clearFields();
+
+        TotalTasks++;
+
+        CalcDone(taskType);
+    }
+
+}
+
+
+var Task=function(task,type)
+{
     this.task=task;
     id=new Date();
     this.id=id.getTime();
@@ -64,43 +75,57 @@ var Task=function(task,type){
     this.done=false;
 }
 
-document.querySelector('.tasks_list').addEventListener('click',done);
 
-function done(event)
+function clearFields()
 {
+    var field;
+    field=document.querySelector('.task_cate');
+    field.value="";
+    filed=document.querySelector('.add_task');
+    filed.value="";
+}
 
-    var taskID,ID,index,splitID,ids;
-    taskID=event.target.parentNode.id;
-    splitID=taskID.split('-');
-       
-    ID=parseInt(splitID[1]);
 
-    ids=tasks[splitID[0]].map(function(current){
+document.querySelector('.tasks_list').addEventListener('click',taskDone);
+
+function taskDone(event)
+{
+    var taskid,splitid,ID;
+    taskid=event.target.parentNode.id;
+    splitid=taskid.split('-');
+    ID=parseInt(splitid[1]);
+    ids=tasks[splitid[0]].map(function(current){
         return current.id;
     });
     index=ids.indexOf(ID);
-    if(!tasks[splitID[0]][index].done)
-    {         
-        tasks[splitID[0]][index].done=true;
-        tasksDone++;
-        Donetasks(splitID[0]);
+    if(!(tasks[splitid[0]][index].done))
+    {
+
+        tasks[splitid[0]][index].done=true;
+        TotalDone++;
+        CalcDone(splitid[0]);
     }
 }
 
 
-function Donetasks(type)
+
+
+
+
+
+function CalcDone(category)
 {
-    var total_type=0,tasksDone_type=0;
-    tasks[type].forEach(function(current)
-    {
+    var done_cate=0,total_cate=0;
+    tasks[category].forEach(function(current){
         if(current.done){
-            tasksDone_type++;
+            done_cate++;
         }
-        total_type++;
+        total_cate++;
     });
-    document.querySelector('.done_'+type).textContent='Done'+' '+tasksDone_type+'/'+total_type;
-    document.querySelector('.tasks_done').textContent='Total tasks Done'+' '+tasksDone+'/'+total;
+    document.querySelector('.done_'+category).textContent='Done'+' '+done_cate+'/'+total_cate;
+    document.querySelector('.TasksDone').textContent='Done'+' '+TotalDone+'/'+TotalTasks;
 }
+
 
 
 
