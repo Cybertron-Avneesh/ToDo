@@ -55,14 +55,12 @@ document.querySelector('.add_button').addEventListener('click',addTask);
 
 if(!localStorage.getItem('cat'))
 {
-    console.log('hvjh');
     var tasks=new Object();
     var TotalTasks=0,TotalDone=0;
 }
 
 function addTask()
 {
-    console.log(tasks);
     var taskType,task,newTask;
     task=document.querySelector('.add_task').value;
     taskType=document.querySelector('.taskType').value;
@@ -180,6 +178,7 @@ window.onload=function(){
     if(localStorage.getItem('cat'))
     {
         console.log(TotalDone);
+
         categories=JSON.parse(localStorage.getItem('categories'));
         tasks=JSON.parse(localStorage.getItem('tasks'));
         console.log(tasks);
