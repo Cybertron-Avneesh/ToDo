@@ -1,15 +1,35 @@
 
 var TotalTasks=0,TotalDone=0;
-
+/*
+localStorage.removeItem('categories');
+localStorage.removeItem('cat');
+localStorage.removeItem('tasks');
+*/
 document.querySelector('.add_cate_btn').addEventListener('click',addCategory);
+
+var categories=[];
+
 
 function addCategory()
 {
-    var category,htmlOption,htmlTitle;
+    var category;
+    console.log(tasks);
     category=document.querySelector('.task_cate').value;
+    categories.push(category);
+    StoreCategory(categories);
+    CategoryMaker(category);
+}
+
+function CategoryMaker(category)
+{
+    var htmlOption,htmlTitle;
+
     if(category!=='')
-    {
-        tasks[category]=[];
+    {   
+        if(!tasks[category])
+        {
+            tasks[category]=[];
+        }
 
         htmlOption='<option value="%Category%">%category%</option>'
 
@@ -33,34 +53,45 @@ function addCategory()
 
 document.querySelector('.add_button').addEventListener('click',addTask);
 
-
-var tasks=new Object();
-
+if(!localStorage.getItem('cat'))
+{
+    console.log('hvjh');
+    var tasks=new Object();
+    var TotalTasks=0,TotalDone=0;
+}
 
 function addTask()
 {
-    var task,html,taskType,newTask;
+    console.log(tasks);
+    var taskType,task,newTask;
     task=document.querySelector('.add_task').value;
     taskType=document.querySelector('.taskType').value;
+    newTask=new Task(task,taskType);
+    tasks[taskType].push(newTask);
+    console.log(tasks);
+    StoreTask(tasks);
+    TaskMaker(newTask);
+}
 
-    if(task!=='')
+
+function TaskMaker(newTask)
+{
+    var html;
+    if(newTask.task!=='')
     {
-
-        newTask=new Task(task,taskType);
-        tasks[taskType].push(newTask);
 
         html='<div id="%task_type-%id%"><li>%List%</li><input type="checkbox" class="Done_btn">Done</input></div>';
 
-        html=html.replace('%task_type-%id%',taskType+'-'+newTask.id);
-        html=html.replace('%List%',task);
+        html=html.replace('%task_type-%id%',newTask.type+'-'+newTask.id);
+        html=html.replace('%List%',newTask.task);
 
-        document.querySelector('.'+taskType).insertAdjacentHTML('beforeend',html);
+        document.querySelector('.'+newTask.type).insertAdjacentHTML('beforeend',html);
 
         clearFields();
 
         TotalTasks++;
 
-        CalcDone(taskType);
+        CalcDone(newTask.type);
     }
 
 }
@@ -103,11 +134,18 @@ function taskDone(event)
 
         tasks[splitid[0]][index].done=true;
         TotalDone++;
+        StoreTask(tasks);
+        CalcDone(splitid[0]);
+    }
+    else if((tasks[splitid[0]][index].done))
+    {
+
+        tasks[splitid[0]][index].done=false;
+        TotalDone--;
+        StoreTask(tasks);
         CalcDone(splitid[0]);
     }
 }
-
-
 
 
 
@@ -128,15 +166,47 @@ function CalcDone(category)
 
 
 
+function StoreCategory(categories)
+{
 
 
+    localStorage.setItem('categories',JSON.stringify(categories));
+    localStorage.setItem('cat',6);
+
+}
 
 
+window.onload=function(){
+    if(localStorage.getItem('cat'))
+    {
+        console.log(TotalDone);
+        categories=JSON.parse(localStorage.getItem('categories'));
+        tasks=JSON.parse(localStorage.getItem('tasks'));
+        console.log(tasks);
+        //var Categories=JSON.parse(localStorage.getItem('categories'));
+        //var Tasks=JSON.parse(localStorage.getItem('tasks'));
+        //console.log(tasks);
+        console.log(categories);
+        categories.forEach(function(current){
+            CategoryMaker((current));
+            CalcDone(current);
+            if(tasks[current])
+            {
+                tasks[current].forEach(function(curr){
+                    TaskMaker(curr);
+                });
+            }
+            
+            
+            
+        });
+    }
 
+}
 
+function StoreTask(tasks)
+{
 
-
-
-
- 
+    localStorage.setItem('tasks',JSON.stringify(tasks));
+}
 
