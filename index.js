@@ -1,9 +1,11 @@
-
-var TotalTasks=0,TotalDone=0;
+var TotalTasks=0,TotalDone;
 /*
 localStorage.removeItem('categories');
 localStorage.removeItem('cat');
 localStorage.removeItem('tasks');
+localStorage.removeItem('TotalDone');
+localStorage.removeItem('TotalTasks');
+
 */
 document.querySelector('.add_cate_btn').addEventListener('click',addCategory);
 
@@ -56,7 +58,7 @@ document.querySelector('.add_button').addEventListener('click',addTask);
 if(!localStorage.getItem('cat'))
 {
     var tasks=new Object();
-    var TotalTasks=0,TotalDone=0;
+    TotalTasks=0,TotalDone=0;
 }
 
 function addTask()
@@ -66,7 +68,6 @@ function addTask()
     taskType=document.querySelector('.taskType').value;
     newTask=new Task(task,taskType);
     tasks[taskType].push(newTask);
-    console.log(tasks);
     StoreTask(tasks);
     TaskMaker(newTask);
 }
@@ -88,7 +89,6 @@ function TaskMaker(newTask)
         clearFields();
 
         TotalTasks++;
-
         CalcDone(newTask.type);
     }
 
@@ -132,6 +132,7 @@ function taskDone(event)
 
         tasks[splitid[0]][index].done=true;
         TotalDone++;
+        StoreDone(TotalDone);
         StoreTask(tasks);
         CalcDone(splitid[0]);
     }
@@ -140,6 +141,7 @@ function taskDone(event)
 
         tasks[splitid[0]][index].done=false;
         TotalDone--;
+        StoreDone(TotalDone);
         StoreTask(tasks);
         CalcDone(splitid[0]);
     }
@@ -177,15 +179,14 @@ function StoreCategory(categories)
 window.onload=function(){
     if(localStorage.getItem('cat'))
     {
-        console.log(TotalDone);
-
+        TotalTasks=0;
         categories=JSON.parse(localStorage.getItem('categories'));
         tasks=JSON.parse(localStorage.getItem('tasks'));
-        console.log(tasks);
+        TotalDone=JSON.parse(localStorage.getItem('TotalDone'));
+        TotalTasks=JSON.parse(localStorage.getItem('TotalTasks'));
         //var Categories=JSON.parse(localStorage.getItem('categories'));
         //var Tasks=JSON.parse(localStorage.getItem('tasks'));
         //console.log(tasks);
-        console.log(categories);
         categories.forEach(function(current){
             CategoryMaker((current));
             CalcDone(current);
@@ -208,4 +209,16 @@ function StoreTask(tasks)
 
     localStorage.setItem('tasks',JSON.stringify(tasks));
 }
+
+function StoreDone(TotalDone,TotalTasks)
+{
+    localStorage.setItem('TotalDone',JSON.stringify(TotalDone));
+}
+
+
+
+
+
+
+
 
