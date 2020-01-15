@@ -81,7 +81,7 @@ var init=function(categories,TotalDone,TotalTasks,tasks)
                 clearFields();
 
                 TotalTasks++;
-                this.calcDone(newTask.type);
+                CalcDone(newTask.type);
             }
 
         },
@@ -90,8 +90,9 @@ var init=function(categories,TotalDone,TotalTasks,tasks)
             tasks[category].forEach(function(current){
                 if(current.done){
                     done_cate++;
-                    //document.querySelector('.Done_btn').checked=true;
-                }
+                    document.querySelector('#check-'+current.id).checked=true;
+                    console.log(document.querySelector('#check-'+current.id).checked);
+               }
                 total_cate++;
             });
             document.querySelector('.done_'+category).textContent='Done'+' '+done_cate+'/'+total_cate;
@@ -138,6 +139,20 @@ var init=function(categories,TotalDone,TotalTasks,tasks)
         filed.value="";
     }
 
+
+    function CalcDone(category){
+        var done_cate=0,total_cate=0;
+        tasks[category].forEach(function(current){
+            if(current.done){
+                done_cate++;
+                    //document.querySelector('.Done_btn').checked=true;
+                    //console.log(document.querySelector('#check-'+current.id).checked);
+           }
+            total_cate++;
+        });
+        document.querySelector('.done_'+category).textContent='Done'+' '+done_cate+'/'+total_cate;
+        document.querySelector('.TasksDone').textContent='Done'+' '+TotalDone+'/'+TotalTasks;
+    }
 
     document.querySelector('.tasks_list').addEventListener('click',taskDone);
 
@@ -222,14 +237,14 @@ window.onload=function(){
 
         categories.forEach(function(current){
             Maker.CategoryMaker((current));
-            Maker.calcDone(current);
             if(tasks[current])
             {
                 tasks[current].forEach(function(curr){
                     Maker.TaskMaker(curr);
                 });
-            }        
-            
+            }   
+            Maker.calcDone(current);
+
         });
     }
 
