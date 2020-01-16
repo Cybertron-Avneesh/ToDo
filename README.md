@@ -14,10 +14,9 @@
 
 
 
-  1.Add a dropdown which contains categories
-  -CS learning
-  -HouseHold task
-  -Entairnment
+  1.Add Date of Tasks(Date on which task is added)
+
+  2.Add tasks with #categories. (It should suggestions of categories based on previous tasks like Google search)
 
   2.Create checkbox for each task
   -GIve count of task done(for total and for each categories)
