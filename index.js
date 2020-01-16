@@ -5,7 +5,9 @@ localStorage.removeItem('tasks');
 localStorage.removeItem('TotalDone');
 localStorage.removeItem('TotalTasks');
 localStorage.removeItem('Maker');
+ll
 */
+
 
 var init=function(categories,TotalDone,TotalTasks,tasks)
 {
@@ -91,7 +93,6 @@ var init=function(categories,TotalDone,TotalTasks,tasks)
                 if(current.done){
                     done_cate++;
                     document.querySelector('#check-'+current.id).checked=true;
-                    console.log(document.querySelector('#check-'+current.id).checked);
                }
                 total_cate++;
             });
