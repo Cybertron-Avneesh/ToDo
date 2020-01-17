@@ -5,7 +5,8 @@ localStorage.removeItem('tasks');
 localStorage.removeItem('TotalDone');
 localStorage.removeItem('TotalTasks');
 localStorage.removeItem('Maker');
-ll
+
+
 */
 
 
